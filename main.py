@@ -20,7 +20,7 @@ class MainWindow(QMainWindow):
 	def __init__(self, parent=None):
 		super(MainWindow, self).__init__(parent)
 
-		self.resize(800, 600)
+		self.resize(400, 400)
 		self.setWindowTitle(u"""
 			Составление "идеального" расписания
 			""")
@@ -28,6 +28,7 @@ class MainWindow(QMainWindow):
 		self.peopleLabel = QLabel(u"Количество человек: ", self)
 		self.groupLabel = QLabel(u"Группы по: ", self)
 		self.toursLabel = QLabel(u"Количество туров: ", self)
+		self.functionLabel = QLabel(u"Целевая функция:", self)
 
 		self.peopleSpin = QSpinBox(self)
 		self.peopleSpin.setMinimum(0)
@@ -40,8 +41,20 @@ class MainWindow(QMainWindow):
 
 		self.calculateButton = QPushButton(u"Вычислить", self)
 
+		self._names = {
+			u"Полный перебор" 				:	u"Brute",
+			u"Максимальное число вхождений"	:	u"maxCollisions",
+			u"Сумма вхождений"				:	u"sumOfCollisions",
+			u"Максимальная сумма вхождений"	:	u"maxOfSums"
+		}
+
 		self.moduleBox = QComboBox(self)
-		self.moduleBox.insertItem(0, u"Brute")
+		self.moduleBox.insertItem(0, u"Полный перебор")
+
+		self.functionBox = QComboBox(self)
+		self.functionBox.insertItem(0, u"Максимальное число вхождений")
+		self.functionBox.insertItem(1, u"Сумма вхождений")
+		self.functionBox.insertItem(2, u"Максимальная сумма вхождений")
 
 		self.centralWidget = QWidget(self)
 		self.grid = QGridLayout()
@@ -52,7 +65,10 @@ class MainWindow(QMainWindow):
 		self.grid.addWidget(self.groupSpin, 1, 1)
 		self.grid.addWidget(self.toursLabel, 2, 0)
 		self.grid.addWidget(self.toursSpin, 2, 1)
-		self.grid.addWidget(self.calculateButton, 3, 0)
+		self.grid.addWidget(self.functionLabel, 3, 0)
+		self.grid.addWidget(self.functionBox, 3, 1)
+		self.grid.addWidget(self.moduleBox, 4, 0)
+		self.grid.addWidget(self.calculateButton, 4, 1)
 
 		self.centralWidget.setLayout(self.grid)
 		self.setCentralWidget(self.centralWidget)
@@ -65,12 +81,33 @@ class MainWindow(QMainWindow):
 			В общем, структура класса алгоритма должна быть
 			понятна -- инициализация с тремя параметрами и метод run()
 		"""
-		alg = getattr(sys.modules[__name__], self.moduleBox.currentText())(
+		alg = getattr(sys.modules[__name__], self._names[self.moduleBox.currentText()])(
 																			self.peopleSpin.value(),
 																			self.toursSpin.value(),
-																			self.groupSpin.value()
+																			self.groupSpin.value(),
+																			self._names[self.functionBox.currentText()]
 		)
-		alg.run()
+		try:
+			res = alg.run()
+		except Exception as e:
+			print e
+			self.close()
+			return
+
+		with open("output.txt", "w") as f:
+			# с этим еще непонятно
+			# f.truncate()
+
+			s = u"==="*20 + u" Найденное расписание " + u"==="*20 + u"\n\n"
+			f.write(s.encode('utf-8'))
+			for i, x in enumerate(res):
+				f.write("Тур № %s\n"%(i+1))
+				for j, y in enumerate(x):
+					for z in y:
+						f.write("%s"%(z+1))
+						f.write(' ')
+					f.write('\n')
+			f.write('\n\n')
 
 if __name__ == "__main__":
 	app = QApplication([])
