@@ -22,7 +22,7 @@ class Brute():
 		self._m = m
 		self._k = k
 		self._mtrxs = []
-		self._toursCombs = []
+		# self._toursCombs = []
 		self._participants = range(self._n)
 		self._funcName = funcName
 		if n % k == 0:
@@ -43,11 +43,11 @@ class Brute():
 		# здесь получится список кортежей возможных групп
 		# из ВСЕХ элементов, независимо от того, делится
 		# n на k нацело
-		combs = tuple(combinations(self._participants, self._k))
+		combs = combinations(self._participants, self._k)
 
 		# теперь нужно склеить их во все возможные
 		# варианты для одного тура
-		combCombs = list(combinations(combs, self._totalGroups))
+		combCombs = combinations(combs, self._totalGroups)
 		# если одно из возможных сочетаний сочетаний образует
 		# исходное множество, тогда оно нам подходит
 		check = lambda x: sorted(list(reduce(lambda acc, y: acc+y, x))) == self._participants
@@ -65,7 +65,7 @@ class Brute():
 		# конечно, это наверняка можно оптимизировать
 		# и вообще это не python-way, но не время над
 		# этим думать
-		self._mtrxs = [[[0 for i in self._participants] for j in self._participants] for k in range(len(self._toursCombs))]
+		self._mtrxs = [[[0 for i in self._participants] for j in self._participants] for k in range(len(list(self._toursCombs)))]
 
 		for i in self._participants:
 			for j in self._participants:
@@ -99,6 +99,7 @@ class Brute():
 							lambda acc, y: acc+y, x
 			))
 		for x in self._mtrxs]
+		# print list(self._toursCombs)
 		return self._toursCombs[sums.index(min(sums))]
 
 	def maxOfSums(self):

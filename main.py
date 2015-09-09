@@ -79,7 +79,7 @@ class MainWindow(QMainWindow):
 	def __calculate(self):
 		"""
 			В общем, структура класса алгоритма должна быть
-			понятна -- инициализация с тремя параметрами и метод run()
+			понятна -- инициализация с четыремя параметрами и метод run()
 		"""
 		alg = getattr(sys.modules[__name__], self._names[self.moduleBox.currentText()])(
 																			self.peopleSpin.value(),
@@ -87,12 +87,15 @@ class MainWindow(QMainWindow):
 																			self.groupSpin.value(),
 																			self._names[self.functionBox.currentText()]
 		)
-		try:
-			res = alg.run()
-		except Exception as e:
-			print e
-			self.close()
-			return
+		# try:
+		res = alg.run()
+		# except Exception as e:
+		# 	print 'FAIL!'
+		# 	print e
+		# 	self.close()
+		# 	return
+
+		# print res
 
 		with open("output.txt", "w") as f:
 			# с этим еще непонятно
