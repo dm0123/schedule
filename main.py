@@ -9,9 +9,11 @@
 
 from PySide.QtCore import *
 from PySide.QtGui import *
-import sys
+import sys, traceback
 
 from brute import Brute
+from particle_swarm import ParticleSwarm
+from smart_insertion import SmartInsertion
 
 class MainWindow(QMainWindow):
 	"""
@@ -43,6 +45,8 @@ class MainWindow(QMainWindow):
 
 		self._names = {
 			u"Полный перебор" 				:	u"Brute",
+			u"Метод роя частиц"				:	u"ParticleSwarm",
+			u"Умное заполнение"				:	u"SmartInsertion",
 			u"Максимальное число вхождений"	:	u"maxCollisions",
 			u"Сумма вхождений"				:	u"sumOfCollisions",
 			u"Максимальная сумма вхождений"	:	u"maxOfSums"
@@ -50,6 +54,8 @@ class MainWindow(QMainWindow):
 
 		self.moduleBox = QComboBox(self)
 		self.moduleBox.insertItem(0, u"Полный перебор")
+		self.moduleBox.insertItem(1, u"Метод роя частиц")
+		self.moduleBox.insertItem(2, u"Умное заполнение")
 
 		self.functionBox = QComboBox(self)
 		self.functionBox.insertItem(0, u"Максимальное число вхождений")
@@ -87,20 +93,19 @@ class MainWindow(QMainWindow):
 																			self.groupSpin.value(),
 																			self._names[self.functionBox.currentText()]
 		)
-		# try:
-		res = alg.run()
-		# except Exception as e:
-		# 	print 'FAIL!'
-		# 	print e
-		# 	self.close()
-		# 	return
+		try:
+			res = alg.run()
+		except Exception as e:
+			print 'FAIL!'
+			exc_type, exc_value, exc_traceback = sys.exc_info()
+			traceback.print_tb(exc_traceback)
+			QMessageBox.critical(self, "No!", str(e))
+			self.close()
+			return
 
 		# print res
 
-		with open("output.txt", "w") as f:
-			# с этим еще непонятно
-			# f.truncate()
-
+		with open("output.txt", "w+") as f:
 			s = u"==="*20 + u" Найденное расписание " + u"==="*20 + u"\n\n"
 			f.write(s.encode('utf-8'))
 			for i, x in enumerate(res):
@@ -111,6 +116,7 @@ class MainWindow(QMainWindow):
 						f.write(' ')
 					f.write('\n')
 			f.write('\n\n')
+			QMessageBox.information(self, "Done!", "Open output.txt!")
 
 if __name__ == "__main__":
 	app = QApplication([])
