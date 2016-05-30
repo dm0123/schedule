@@ -14,6 +14,8 @@
 from algorithm import Algorithm, BadNumbers
 import random
 
+EMPTY = -1
+
 class SmartInsertion(Algorithm):
 	"""
 	Алгоритм умной вставки
@@ -28,11 +30,11 @@ class SmartInsertion(Algorithm):
 		collision_count = 0
 
 		# генератор пустышки расписаний, которую мы будем заполнять элементами
-		template = [[[0 for i in xrange(self._k)] for j in xrange(self._totalGroups)] for k in xrange(self._m)]
+		template = [[[EMPTY for i in xrange(self._k)] for j in xrange(self._totalGroups)] for k in xrange(self._m)]
 		
 		# для каждого учатсника перебираем пустышку и выполняем шаги по вставке 
-		for participant in self._participants: 
-			for m, tour in enumerate(template):
+		for m, tour in enumerate(template):
+			for participant in self._participants: 
 
 				# сюда будем записывать группы, где участник уже был
 				in_prev_group_list = []
@@ -40,20 +42,27 @@ class SmartInsertion(Algorithm):
 				candidate_groups = []
 
 				# Condition_1: Вставляем элемент в ту группу, в которой он не был во всех предыдущих турах
-				for i in xrange(m):
-					for num, prev_group in enumerate(template):
-						if(participant in prev_group):
-							in_prev_group_list.append(num)
+				if participant > 0:
+					for i in xrange(m - 1):
+						for num, prev_group in enumerate(template):
+							if participant - 1 in prev_group:
+								in_prev_group_list.append(num)
+
+				print "in_prev_group_list: "%in_prev_group_list
 
 				candidate_groups = filter(lambda x: x not in in_prev_group_list, xrange(self._totalGroups))
-				print "participant: %s, m: %s, tour: %s"%(participant, m, tour)
+				print "iteration: %s"%participant
+				print "candidate_groups: %s"%candidate_groups
+				print "TEMPLATE: %s"%template
 				# Condition_2: Вставляем элемент в группу с наибольшим количеством свободных мест (нулей)
-				nulls = map(lambda x: x.count(0), tour)
+				nulls = map(lambda x: x.count(EMPTY), tour)
 
 				# Сложно: находим номер группы, которая есть в кандидатах из первого условия и одновременно
 				# максимально свободную
 				try:
-					group_index = nulls.index(nulls[max(candidate_groups)])
+					# group_index = nulls.index(nulls[max(candidate_groups)])
+					candidate_index = candidate_groups.index([sorted(nulls)[-1]])
+					group_index = candidate_groups[candidate_index]
 				except ValueError:
 					# если не получается
 					collision_count += 1
@@ -63,12 +72,20 @@ class SmartInsertion(Algorithm):
 						# просто запишем в самый свободный
 						group_index = nulls.index(max(nulls))
 					else:
-						group_index = random.choice(candidate_groups)
+						for candidate in candidate_groups:
+							if EMPTY in template[m][candidate]:
+								group_index = candidate
+								break
 
-				# найдем индекс первого пустого элемента в группе, которую мы собрались заполнять
-				participant_index = template[m][group_index].index(0)
-				# наконец, мы нашли что и чем заполнять
-				template[m][group_index][participant_index] = participant
+				try:
+					# найдем индекс первого пустого элемента в группе, которую мы собрались заполнять
+					participant_index = template[m][group_index].index(EMPTY)
+					# наконец, мы нашли что и чем заполнять
+					template[m][group_index][participant_index] = participant
+				except Exception as e:
+					print e
+					print template[m]
+					continue
 
 		print "Collision count: %s"%collision_count
 		return template
