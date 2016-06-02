@@ -14,6 +14,7 @@ import sys, traceback
 from brute import Brute
 from particle_swarm import ParticleSwarm
 from smart_insertion import SmartInsertion
+from simulated_annealing import SimulatedAnnealing
 
 class MainWindow(QMainWindow):
 	"""
@@ -47,6 +48,7 @@ class MainWindow(QMainWindow):
 			u"Полный перебор" 				:	u"Brute",
 			u"Метод роя частиц"				:	u"ParticleSwarm",
 			u"Умное заполнение"				:	u"SmartInsertion",
+			u"Метод имитации отжига"		:	u"SimulatedAnnealing",
 			u"Максимальное число вхождений"	:	u"maxCollisions",
 			u"Сумма вхождений"				:	u"sumOfCollisions",
 			u"Максимальная сумма вхождений"	:	u"maxOfSums"
@@ -56,6 +58,7 @@ class MainWindow(QMainWindow):
 		self.moduleBox.insertItem(0, u"Полный перебор")
 		self.moduleBox.insertItem(1, u"Метод роя частиц")
 		self.moduleBox.insertItem(2, u"Умное заполнение")
+		self.moduleBox.insertItem(3, u"Метод имитации отжига")
 
 		self.functionBox = QComboBox(self)
 		self.functionBox.insertItem(0, u"Максимальное число вхождений")
@@ -116,7 +119,7 @@ class MainWindow(QMainWindow):
 						f.write(' ')
 					f.write('\n')
 			f.write('\n\n')
-			QMessageBox.information(self, "Done!", "Open output.txt!")
+		QMessageBox.information(self, "Done!", "Open output.txt!")
 
 if __name__ == "__main__":
 	app = QApplication([])

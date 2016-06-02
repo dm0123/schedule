@@ -57,7 +57,7 @@ class MetaHeuristic(Algorithm):
 
 	@staticmethod
 	def split_list(l, n):
-		"""Yield successive n-sized chunks from l."""
+		"""Разбить список l на списки длины n"""
 		for i in xrange(0, len(l), n):
 			yield l[i:i+n]
 
