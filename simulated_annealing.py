@@ -5,13 +5,13 @@ import math
 from metaheuristic import MetaHeuristic
 
 # Конечная температура
-COOL = 3.5
+COOL = 0.001
 #  Начальная температура какая-нибудь огромная 
-START_TEMPERATURE = 1000
+START_TEMPERATURE = 200
 # Значение декремента убывающей функции
-DECREMENT = 100
+DECREMENT = 1.02
 
-MAGIC_CONSTANT = 1.5
+MAGIC_CONSTANT = 0.01
 
 """
 1) сравниваем текущее значение F с наилучшим найденным;
@@ -59,7 +59,7 @@ class SimulatedAnnealing(MetaHeuristic):
 		while temperature > COOL:
 			self.__move_to_new_tours(schedule, temperature)
 
-			if optimization_func(schedule) > best_function_result:
+			if optimization_func(schedule) < best_function_result:
 				best_schedule = schedule
 			else:
 				if random.random() > h(temperature, optimization_func(schedule) - best_function_result):
@@ -69,7 +69,10 @@ class SimulatedAnnealing(MetaHeuristic):
 
 			best_function_result = optimization_func(schedule)
 
+			print "best_function_result: %s"%best_function_result
+
 			temperature = decrease_temperature(temperature, iteration)
+			print "temperature: %s"%temperature
 			iteration += 1
 
 		return best_schedule
@@ -79,7 +82,7 @@ class SimulatedAnnealing(MetaHeuristic):
 		"""
 		Функция случайного выбора следующего тура
 		на основе текущей вероятности
-		TODO: add implementation
+		TODO: add serious implementation
 		"""
 		alpha = random.random()
 
@@ -89,5 +92,10 @@ class SimulatedAnnealing(MetaHeuristic):
 		# о генерации нового тура. Конечно, эффективность будет очевидно снижена.
 		z = (math.pow((1 + 1/temperature), (2 * alpha - 1)) - 1) * temperature;
 
+		print "ZZZZ: %s\n\n"%z
+		tour = random.choice(range(self._m))
+		group = random.choice(range(self._totalGroups))
 		if z > MAGIC_CONSTANT:
-			schedule = MetaHeuristic.generateRandomSchedule(self._n, self._m, self._k, self._totalGroups)
+			random.shuffle(schedule[tour][group])
+		else:
+			schedule = MetaHeuristic.generateRandomSchedule(self._n, self._m, self._k, self._totalGroups) 

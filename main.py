@@ -15,6 +15,7 @@ from brute import Brute
 from particle_swarm import ParticleSwarm
 from smart_insertion import SmartInsertion
 from simulated_annealing import SimulatedAnnealing
+from genetic_algorithm import GeneticAlgorithm
 
 class MainWindow(QMainWindow):
 	"""
@@ -49,6 +50,7 @@ class MainWindow(QMainWindow):
 			u"Метод роя частиц"				:	u"ParticleSwarm",
 			u"Умное заполнение"				:	u"SmartInsertion",
 			u"Метод имитации отжига"		:	u"SimulatedAnnealing",
+			u"Генетический алгоритм"		:	u"GeneticAlgorithm",
 			u"Максимальное число вхождений"	:	u"maxCollisions",
 			u"Сумма вхождений"				:	u"sumOfCollisions",
 			u"Максимальная сумма вхождений"	:	u"maxOfSums"
@@ -59,6 +61,7 @@ class MainWindow(QMainWindow):
 		self.moduleBox.insertItem(1, u"Метод роя частиц")
 		self.moduleBox.insertItem(2, u"Умное заполнение")
 		self.moduleBox.insertItem(3, u"Метод имитации отжига")
+		self.moduleBox.insertItem(4, u"Генетический алгоритм")
 
 		self.functionBox = QComboBox(self)
 		self.functionBox.insertItem(0, u"Максимальное число вхождений")

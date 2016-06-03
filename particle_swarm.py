@@ -7,7 +7,7 @@ import random
 from metaheuristic import MetaHeuristic
 
 MAX_ITERATIONS = 10000
-PARTICLES_COUNT = 100
+PARTICLES_COUNT = 10
 MIN_ERR = 2
 
 def error(position, func):
