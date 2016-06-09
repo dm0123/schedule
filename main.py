@@ -7,9 +7,10 @@
 	классами алгоритмов.
 """
 
+import sys, traceback
+
 from PySide.QtCore import *
 from PySide.QtGui import *
-import sys, traceback
 
 from brute import Brute
 from particle_swarm import ParticleSwarm
@@ -45,23 +46,23 @@ class MainWindow(QMainWindow):
 
 		self.calculateButton = QPushButton(u"Вычислить", self)
 
-		self._names = {
-			u"Полный перебор" 				:	u"Brute",
-			u"Метод роя частиц"				:	u"ParticleSwarm",
-			u"Умное заполнение"				:	u"SmartInsertion",
-			u"Метод имитации отжига"		:	u"SimulatedAnnealing",
-			u"Генетический алгоритм"		:	u"GeneticAlgorithm",
+		self._funcNames = {
 			u"Максимальное число вхождений"	:	u"maxCollisions",
 			u"Сумма вхождений"				:	u"sumOfCollisions",
 			u"Максимальная сумма вхождений"	:	u"maxOfSums"
 		}
 
+		self._algorithmNames = {
+			u"Полный перебор" 				:	u"Brute",
+			u"Метод роя частиц"				:	u"ParticleSwarm",
+			u"Жадный алгоритм"				:	u"SmartInsertion",
+			u"Метод имитации отжига"		:	u"SimulatedAnnealing",
+			u"Эволюционный алгоритм"		:	u"GeneticAlgorithm",
+		}
+
 		self.moduleBox = QComboBox(self)
-		self.moduleBox.insertItem(0, u"Полный перебор")
-		self.moduleBox.insertItem(1, u"Метод роя частиц")
-		self.moduleBox.insertItem(2, u"Умное заполнение")
-		self.moduleBox.insertItem(3, u"Метод имитации отжига")
-		self.moduleBox.insertItem(4, u"Генетический алгоритм")
+		for i, name in enumerate(self._algorithmNames):
+			self.moduleBox.insertItem(i, name)
 
 		self.functionBox = QComboBox(self)
 		self.functionBox.insertItem(0, u"Максимальное число вхождений")
@@ -93,14 +94,20 @@ class MainWindow(QMainWindow):
 			В общем, структура класса алгоритма должна быть
 			понятна -- инициализация с четыремя параметрами и метод run()
 		"""
-		alg = getattr(sys.modules[__name__], self._names[self.moduleBox.currentText()])(
+		alg = getattr(sys.modules[__name__], self._algorithmNames[self.moduleBox.currentText()])(
 																			self.peopleSpin.value(),
 																			self.toursSpin.value(),
 																			self.groupSpin.value(),
-																			self._names[self.functionBox.currentText()]
+																			self._funcNames[self.functionBox.currentText()]
 		)
+		k = self.groupSpin.value()
 		try:
 			res = alg.run()
+
+			# костыль для отсечения ненужных групп длиной меньше, чем k - 1
+			for tour in res:
+				if len(tour[-1]) < (k - 1):
+					del tour[-1]
 		except Exception as e:
 			print 'FAIL!'
 			exc_type, exc_value, exc_traceback = sys.exc_info()
@@ -109,10 +116,8 @@ class MainWindow(QMainWindow):
 			self.close()
 			return
 
-		# print res
-
-		with open("output.txt", "w+") as f:
-			s = u"==="*20 + u" Найденное расписание " + u"==="*20 + u"\n\n"
+		with open("output.txt", "w") as f:
+			s = u" Найденное расписание: \n\n"
 			f.write(s.encode('utf-8'))
 			for i, x in enumerate(res):
 				f.write("Тур № %s\n"%(i+1))
@@ -121,7 +126,7 @@ class MainWindow(QMainWindow):
 						f.write("%s"%(z+1))
 						f.write(' ')
 					f.write('\n')
-			f.write('\n\n')
+				f.write('\n\n')
 		QMessageBox.information(self, "Done!", "Open output.txt!")
 
 if __name__ == "__main__":

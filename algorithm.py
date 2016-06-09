@@ -24,7 +24,11 @@ class Algorithm(object):
 		if n % k == 0:
 			self._totalGroups = n / k
 		else:
-			self._totalGroups = n // k + 1
+			if k - (n % k) == 1:
+				self._totalGroups = n // k + 1
+			else:
+				self._totalGroups = n // k
+		self.function_result = 0
 
 
 	def run(self): 

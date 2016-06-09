@@ -18,7 +18,7 @@ from metaheuristic import MetaHeuristic
 Если выполняются условия остановки, то (конец цикла), иначе (начало цикла).
 """
 
-# Количество особей в нашей популяции мамонтов
+# Количество мамонтов в нашей популяции
 # Мамонты? ну они тоже здоровые
 MAMMOTH_COUNT = 10
 
@@ -59,6 +59,9 @@ class GeneticAlgorithm(MetaHeuristic):
 				temp_mammoths.append(MetaHeuristic.generateRandomSchedule(self._n, self._m, self._k, self._totalGroups))
 			mammoth_list = temp_mammoths
 
+		# запомним лучший результат
+		self.function_result = optimization_func(mammoth_list[0])
+
 		# Возвращаем лучшую из найденных особей
 		return mammoth_list[0]
 
@@ -73,7 +76,6 @@ class GeneticAlgorithm(MetaHeuristic):
 		# groups = reduce(lambda acc, x: acc + x, reduce(lambda acc2, y: acc2 + y, schedule[tour]))
 		# random.shuffle(groups)
 		# schedule[tour] = list(MetaHeuristic.split_list(groups, MetaHeuristic.split_list(self._totalGroups)))
-		print "MUTATING: %s\n\n"%schedule
 
 		tour = random.choice(range(self._m))
 		group = random.choice(range(self._totalGroups))

@@ -1,4 +1,7 @@
 # -*- coding: utf-8 -*-
+"""
+Метод роя частиц
+"""
 
 import math
 import sys
@@ -129,5 +132,7 @@ class ParticleSwarm(MetaHeuristic):
 			for y in x:
 				for z in y:
 					z = round(z)
+
+		self.function_result = best_swarm_err
 
 		return best_swarm_pos

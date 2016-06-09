@@ -13,7 +13,6 @@ class MetaHeuristic(Algorithm):
 		"""
 		Генерация случайного расписания
 		"""
-
 		res = []
 		tour = []
 		while len(res) < m:
@@ -28,15 +27,7 @@ class MetaHeuristic(Algorithm):
 		"""
 		Генерация случайного тура.
 		"""
-
 		res = []
-		# group = [] 
-		# while len(res) < totalGroups:
-		# 	group = MetaHeuristic.generateRandomGroup(k)
-		# 	check = lambda x: set(x).isdisjoint(group)
-		# 	cond = filter(check, res)
-		# 	if len(cond) < 1:
-		# 		res.append(group)
 
 		participants = range(n)
 		random.shuffle(participants)
@@ -102,7 +93,6 @@ class MetaHeuristic(Algorithm):
 		Метод возращает сумму всех игр
 		каждого участника с каждым
 		"""
-
 		mtrx = self.__getMtrx(schedule)
 
 		summ = reduce(

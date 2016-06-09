@@ -9,7 +9,7 @@ COOL = 0.001
 #  Начальная температура какая-нибудь огромная 
 START_TEMPERATURE = 200
 # Значение декремента убывающей функции
-DECREMENT = 1.02
+DECREMENT = 1.0001
 
 MAGIC_CONSTANT = 0.01
 
@@ -74,6 +74,8 @@ class SimulatedAnnealing(MetaHeuristic):
 			temperature = decrease_temperature(temperature, iteration)
 			print "temperature: %s"%temperature
 			iteration += 1
+
+		self.function_result = best_function_result
 
 		return best_schedule
 
